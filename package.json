@@ -9,6 +9,7 @@
     "start-in-docker": "vite --force --host",
     "serve": "pnpm run build; node server.js",
     "build": "pnpm run generate-changelog && vite build",
+    "vercel-build": "node build.js",
     "test": "vitest",
     "whybundled": "pnpm run profile && whybundled stats.json",
     "generate-mtproto-types": "node ./src/scripts/generate_mtproto_types.js src/",
