@@ -2,6 +2,7 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import globals from 'globals';
 import tsParser from '@typescript-eslint/parser';
 import path from 'node:path';
+import {platform} from 'node:os';
 import {fileURLToPath} from 'node:url';
 import js from '@eslint/js';
 import {FlatCompat} from '@eslint/eslintrc';
@@ -75,7 +76,8 @@ export default [{
       }
     }],
 
-    'linebreak-style': ['error', 'unix'],
+    // CRLF working trees on Windows otherwise fail the entire vite build via eslint.
+    'linebreak-style': platform() === 'win32' ? 'off' : ['error', 'unix'],
     'eol-last': 'error',
 
     'indent': ['error', 2, {
