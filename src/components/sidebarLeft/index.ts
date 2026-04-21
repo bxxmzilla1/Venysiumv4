@@ -101,6 +101,7 @@ import isObject from '@helpers/object/isObject';
 import {useAppSettings} from '@stores/appSettings';
 import {openEmojiStatusPicker} from '@components/sidebarLeft/emojiStatusPicker';
 import {animateValue} from '@helpers/animateValue';
+import showLogOutPopup from '@components/popups/logOut';
 
 export const LEFT_COLUMN_ACTIVE_CLASSNAME = 'is-left-column-shown';
 
@@ -689,15 +690,10 @@ export class AppSidebarLeft extends SidebarSlider {
       text: 'Contacts',
       onClick: onContactsClick
     }, {
-      id: 'settings',
-      icon: 'settings',
-      text: 'Settings',
+      icon: 'logout',
+      text: 'EditAccount.Logout',
       separator: true,
-      onClick: () => {
-        closeTabsBefore(() => {
-          this.createTab(AppSettingsTab).open();
-        });
-      }
+      onClick: () => showLogOutPopup()
     }, moreSubmenu];
 
     const filteredButtons = menuButtons.filter(Boolean);
@@ -747,9 +743,13 @@ export class AppSidebarLeft extends SidebarSlider {
         }
 
         const targetIdx = buttons.findIndex((btn) => btn.id === 'settings');
-        buttons[targetIdx].separator = !!attachMenuBotsButtons.length;
-        buttons.splice(targetIdx, 0, ...attachMenuBotsButtons);
-        buttons[targetIdx].separator = true;
+        if(targetIdx !== -1) {
+          buttons[targetIdx].separator = !!attachMenuBotsButtons.length;
+          buttons.splice(targetIdx, 0, ...attachMenuBotsButtons);
+          buttons[targetIdx].separator = true;
+        } else if(attachMenuBotsButtons.length) {
+          buttons.push(...attachMenuBotsButtons);
+        }
 
         const [totalAccounts, notificationsCount] = await Promise.all([
           AccountController.getTotalAccounts(),
@@ -768,9 +768,13 @@ export class AppSidebarLeft extends SidebarSlider {
               },
               regularText: wrapUserName(user),
               onClick: () => {
-                closeTabsBefore(() => {
-                  this.createTab(AppSettingsTab).open();
-                });
+                // Settings is hidden in this white-label build.
+                // Keep the entry useful by opening Saved Messages.
+                setTimeout(() => {
+                  appImManager.setPeer({
+                    peerId: appImManager.myId
+                  });
+                }, 0);
               }
             });
           } else {

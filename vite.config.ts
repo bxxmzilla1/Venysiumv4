@@ -50,10 +50,12 @@ const USE_SELF_SIGNED_CERTS = USE_SSL && false;
 // * chmod 644 web.telegram.org-key.pem
 // * nano /etc/hosts
 // * 127.0.0.1 web.telegram.org
-const host = USE_SSL ? 'web.telegram.org' : 'localhost';
+const host = USE_SSL ? 'web.telegram.org' :
+  (process.env.ELECTRON_DEV === '1' ? '127.0.0.1' : 'localhost');
 const serverOptions: ServerOptions = {
   host,
   port: USE_SSL ? 443 : 8080,
+  strictPort: process.env.ELECTRON_DEV === '1',
   sourcemapIgnoreList(sourcePath, sourcemapPath) {
     return sourcePath.includes('node_modules') ||
       sourcePath.includes('logger') ||

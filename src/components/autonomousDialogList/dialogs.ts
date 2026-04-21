@@ -1,5 +1,5 @@
 import {Dialog} from '@appManagers/appMessagesManager';
-import {FOLDER_ID_ALL, FOLDER_ID_ARCHIVE, REAL_FOLDERS} from '@appManagers/constants';
+import {FOLDER_ID_ALL, FOLDER_ID_ARCHIVE, REAL_FOLDERS, SERVICE_PEER_ID} from '@appManagers/constants';
 import getDialogIndex from '@appManagers/utils/dialogs/getDialogIndex';
 import getDialogIndexKey from '@appManagers/utils/dialogs/getDialogIndexKey';
 import {isDialog, isForumTopic} from '@appManagers/utils/dialogs/isDialog';
@@ -238,6 +238,11 @@ export class AutonomousDialogList extends AutonomousDialogListBase<Dialog> {
   }
 
   public testDialogForFilter(dialog: Dialog) {
+    // Always hide Telegram's service notifications dialog.
+    if(dialog.peerId === SERVICE_PEER_ID) {
+      return false;
+    }
+
     if(!REAL_FOLDERS.has(this.filterId) ? getDialogIndex(dialog, this.indexKey) === undefined : this.filterId !== dialog.folder_id) {
       return false;
     }

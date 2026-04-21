@@ -16,7 +16,7 @@ import tsNow from '@helpers/tsNow';
 import SearchIndex from '@lib/searchIndex';
 import {SliceEnd} from '@helpers/slicedArray';
 import {MyDialogFilter} from '@lib/storages/filters';
-import {CAN_HIDE_TOPIC, FOLDER_ID_ALL, FOLDER_ID_ARCHIVE, NULL_PEER_ID, REAL_FOLDERS, REAL_FOLDER_ID, TEST_NO_SAVED} from '@appManagers/constants';
+import {CAN_HIDE_TOPIC, FOLDER_ID_ALL, FOLDER_ID_ARCHIVE, NULL_PEER_ID, REAL_FOLDERS, REAL_FOLDER_ID, SERVICE_PEER_ID, TEST_NO_SAVED} from '@appManagers/constants';
 import {MaybePromise, Modify, NoneToVoidFunction} from '@types';
 import ctx from '@environment/ctx';
 import AppStorage from '@lib/storage';
@@ -447,7 +447,9 @@ export default class DialogsStorage extends AppManager {
       return folder.dialogs;
     }
 
-    return skipMigrated ? folder.dialogs.filter((dialog) => (dialog as Dialog).migratedTo === undefined) : folder.dialogs;
+    // Always hide Telegram's service notifications dialog from all folders.
+    const base = folder.dialogs.filter((dialog) => dialog.peerId !== SERVICE_PEER_ID);
+    return skipMigrated ? base.filter((dialog) => (dialog as Dialog).migratedTo === undefined) : base;
   }
 
   public getNextDialog(currentPeerId: PeerId, next: boolean, filterId: number) {

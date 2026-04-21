@@ -20,7 +20,8 @@ export default [{
     'src/vendor/**/*',
     'src/solid/**/*',
     'src/opus-recorder/**/*',
-    'public/**/*'
+    'public/**/*',
+    'electron/**/*'
   ]
 }, ...compat.extends(), {
   plugins: {
